@@ -10,6 +10,7 @@ import {
   ScrollView,
   Animated,
 } from 'react-native';
+import $$SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
 
 export default function App() {
   const [isOpen, setIsOpen] = useState(false);
@@ -224,7 +225,12 @@ function GoalCard({ goal, goalCount, onOpen }) {
 }
 
 function LoadingPage(){
+  return(
+      <$$SafeAreaView>
+        <text>loading</text>
 
+      </$$SafeAreaView>
+  )
 }
 
 

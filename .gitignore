@@ -46,3 +46,14 @@ __pycache__/
 .venv/
 venv/
 
+# Secrets (IMPORTANT)
+.env
+.ENV
+*.env
+
+# python 
+
+__pycache__/
+*.pyc
+.venv/
+venv/
