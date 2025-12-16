@@ -9,10 +9,15 @@ import {
   TextInput,
   ScrollView,
   Animated,
+  ActivityIndicator,
 } from 'react-native';
-import $$SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
 
-export default function App() {
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+const Tab = createBottomTabNavigator();
+
+function HomeScreen() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('Choose difficulty');
   const [goalText, setGoalText] = useState('');
@@ -32,6 +37,7 @@ export default function App() {
 
   // ⭐ animation value
   const scaleAnim = useRef(new Animated.Value(0)).current;
+  const [loading, setLoading] = useState(false);
 
   const handleStart = async () => {
     if (!goalText.trim() || selectedOption === 'Choose difficulty') {
@@ -39,11 +45,12 @@ export default function App() {
       return;
     }
 
+    setLoading(true);
     try {
-      const res = await fetch("http://127.0.0.1:8000/generate-objectives", {
-        method: "POST",
+      const res = await fetch('http://127.0.0.1:8000/generate-objectives', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           goal: goalText,
@@ -52,8 +59,8 @@ export default function App() {
       });
 
       if (!res.ok) {
-        console.log("Backend error:", res.status);
-        alert("Error generating objectives.");
+        console.log('Backend error:', res.status);
+        alert('Error generating objectives.');
         return;
       }
 
@@ -65,8 +72,10 @@ export default function App() {
       setObjectives(extracted);
       setShowGoalCard(true);
     } catch (err) {
-      console.error("Network error:", err);
-      alert("Could not contact server.");
+      console.error('Network error:', err);
+      alert('Could not contact server.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -148,8 +157,12 @@ export default function App() {
               </View>
           )}
 
-          <Pressable style={buttonStyles.container} onPress={handleStart}>
-            <Text style={buttonStyles.text}>START</Text>
+          <Pressable
+              style={[buttonStyles.container, loading && { opacity: 0.6 }]}
+              onPress={handleStart}
+              disabled={loading}
+          >
+            <Text style={buttonStyles.text}>{loading ? 'LOADING...' : 'START'}</Text>
           </Pressable>
         </View>
 
@@ -203,11 +216,46 @@ export default function App() {
             </View>
         )}
 
+        {/* FULLSCREEN LOADER */}
+        {loading && (
+            <View style={loaderStyles.overlay}>
+              <ActivityIndicator size="large" />
+              <Text style={loaderStyles.text}>Generating objectives..</Text>
+            </View>
+        )}
+
         <StatusBar style="auto" />
       </SafeAreaView>
   );
 }
 
+function QuestScreen() {
+  return (
+      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Quest</Text>
+      </SafeAreaView>
+  );
+}
+
+function ProfileScreen() {
+  return (
+      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Profile</Text>
+      </SafeAreaView>
+  );
+}
+
+export default function App() {
+  return (
+      <NavigationContainer>
+        <Tab.Navigator>
+          <Tab.Screen name={'Home'} component={HomeScreen} />
+          <Tab.Screen name={'Quest'} component={QuestScreen} />
+          <Tab.Screen name={'Profile'} component={ProfileScreen} />
+        </Tab.Navigator>
+      </NavigationContainer>
+  );
+}
 
 function GoalCard({ goal, goalCount, onOpen }) {
   return (
@@ -223,44 +271,6 @@ function GoalCard({ goal, goalCount, onOpen }) {
       </View>
   );
 }
-
-function LoadingPage(){
-  return(
-      <$$SafeAreaView>
-        <text>loading</text>
-
-      </$$SafeAreaView>
-  )
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // MAIN LAYOUT
 const styles = StyleSheet.create({
@@ -433,4 +443,15 @@ const overlayStyles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
   },
+});
+
+const loaderStyles = StyleSheet.create({
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'grey',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 999,
+  },
+  text: { marginTop: 12, fontSize: 16 },
 });
