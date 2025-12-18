@@ -16,7 +16,16 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {CameraView,useCameraPermissions} from "expo-camera";
 import * as Progress from "react-native-progress";
+import Svg, { Circle, Path } from "react-native-svg";
+import Animated, {
+  useSharedValue,
+  withTiming,
+  useAnimatedProps,
+  runOnJS,
+} from "react-native-reanimated";
 
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 
 
@@ -99,20 +108,212 @@ function Camera({ proofRequirement, onResult, setVerifying }){
 
 
 }
+function CheckMark({
+                     size = 120,
+                     strokeWidth = 10,
+                     duration = 900,
+                     onDone,
+                   }){
+  const r = (size - strokeWidth) /2;
+  const cx = size / 2;
+  const cy = size / 2;
+  const circumference = 2 * Math.PI * r;
 
+  const circleProgress = useSharedValue(0);
+  const checkProgress = useSharedValue(0);
+
+  const circleAnimatedProps = useAnimatedProps( () =>
+      ({strokeDashoffset: circumference *
+            (1 - circleProgress.value),
+  }));
+
+  useEffect(() => {
+    // draw circle first
+    circleProgress.value = withTiming(1, { duration }, (finished) => {
+      if (finished) {
+        // then draw check
+        checkProgress.value = withTiming(1, { duration: 450 }, (done) => {
+          if (done && onDone) runOnJS(onDone)();
+        });
+      }
+    });
+  }, []);
+
+  return (
+      <View style={styles2.container}>
+        <Svg width={size} height={size}>
+          {/* background ring (optional) */}
+          <Circle
+              cx={cx}
+              cy={cy}
+              r={r}
+              stroke="rgba(0,0,0,0.1)"
+              strokeWidth={strokeWidth}
+              fill="none"
+          />
+
+          {/* animated ring */}
+          <AnimatedCircle
+              cx={cx}
+              cy={cy}
+              r={r}
+              stroke="#22c55e"
+              strokeWidth={strokeWidth}
+              strokeLinecap="round"
+              fill="none"
+              strokeDasharray={`${circumference} ${circumference}`}
+              animatedProps={circleAnimatedProps}
+          />
+
+          {/* animated check */}
+          <AnimatedPath
+              d={checkPath}
+              stroke="#22c55e"
+              strokeWidth={strokeWidth}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="none"
+              strokeDasharray={`${checkLength} ${checkLength}`}
+              animatedProps={checkAnimatedProps}
+          />
+        </Svg>
+      </View>
+  );
+
+
+
+
+}
+
+export default function X({
+                                        size = 120,
+                                        strokeWidth = 10,
+                                        circleDuration = 900,
+                                        xDuration = 350,
+                                        onDone,
+                                      }) {
+  const r = (size - strokeWidth) / 2;
+  const cx = size / 2;
+  const cy = size / 2;
+  const circumference = 2 * Math.PI * r;
+
+  const circleProgress = useSharedValue(0);
+  const x1Progress = useSharedValue(0);
+  const x2Progress = useSharedValue(0);
+
+  const circleAnimatedProps = useAnimatedProps(() => ({
+    strokeDashoffset: circumference * (1 - circleProgress.value),
+  }));
+
+  // X coordinates (nice proportions inside the circle)
+  const p1 = { x: size * 0.32, y: size * 0.32 };
+  const p2 = { x: size * 0.68, y: size * 0.68 };
+  const p3 = { x: size * 0.68, y: size * 0.32 };
+  const p4 = { x: size * 0.32, y: size * 0.68 };
+
+  const xPath1 = `M ${p1.x} ${p1.y} L ${p2.x} ${p2.y}`; // \
+  const xPath2 = `M ${p3.x} ${p3.y} L ${p4.x} ${p4.y}`; // /
+
+  // Approx path length for dash animation (good enough)
+  const xLen = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+
+  const x1AnimatedProps = useAnimatedProps(() => ({
+    strokeDashoffset: xLen * (1 - x1Progress.value),
+  }));
+
+  const x2AnimatedProps = useAnimatedProps(() => ({
+    strokeDashoffset: xLen * (1 - x2Progress.value),
+  }));
+
+  useEffect(() => {
+    circleProgress.value = withTiming(1, { duration: circleDuration }, (fin) => {
+      if (fin) {
+        x1Progress.value = withTiming(1, { duration: xDuration }, (fin2) => {
+          if (fin2) {
+            x2Progress.value = withTiming(1, { duration: xDuration }, (fin3) => {
+              if (fin3 && onDone) runOnJS(onDone)();
+            });
+          }
+        });
+      }
+    });
+  }, []);
+
+  return (
+      <View style={styles2.container}>
+        <Svg width={size} height={size}>
+          {/* optional faint ring */}
+          <Circle
+              cx={cx}
+              cy={cy}
+              r={r}
+              stroke="rgba(0,0,0,0.1)"
+              strokeWidth={strokeWidth}
+              fill="none"
+          />
+
+          {/* animated ring */}
+          <AnimatedCircle
+              cx={cx}
+              cy={cy}
+              r={r}
+              stroke="#ef4444"
+              strokeWidth={strokeWidth}
+              strokeLinecap="round"
+              fill="none"
+              strokeDasharray={`${circumference} ${circumference}`}
+              animatedProps={circleAnimatedProps}
+          />
+
+          {/* animated X line 1 */}
+          <AnimatedPath
+              d={xPath1}
+              stroke="#ef4444"
+              strokeWidth={strokeWidth}
+              strokeLinecap="round"
+              fill="none"
+              strokeDasharray={`${xLen} ${xLen}`}
+              animatedProps={x1AnimatedProps}
+          />
+
+          {/* animated X line 2 */}
+          <AnimatedPath
+              d={xPath2}
+              stroke="#ef4444"
+              strokeWidth={strokeWidth}
+              strokeLinecap="round"
+              fill="none"
+              strokeDasharray={`${xLen} ${xLen}`}
+              animatedProps={x2AnimatedProps}
+          />
+        </Svg>
+      </View>
+  );
+}
 function Verification({ result }) {
   if (!result) return null;
   if (result.status === true){
     return(
         <View>
-          <Text>Verification complete: correct</Text>
+          <Text>Verification complete</Text>
+          <CheckMark
+              size={140}
+              strokeWidth={12}
+              onDone={() => console.log("Animation finished!")}
+          />
+
         </View>
     )
 
   }else {
     return(
         <View>
-          <Text>Verification complete: Incorrect</Text>
+          <Text>Verification complete</Text>
+          <X
+              size={140}
+              strokeWidth={12}
+              onDone={() => console.log("Animation finished!")}
+          />
         </View>
     )
   }
@@ -667,4 +868,8 @@ const cameraOverlayStyles = StyleSheet.create({
     borderRadius: 10,
   },
   closeText: { color: "white", fontSize: 16 },
+});
+
+const styles2 = StyleSheet.create({
+  container: { alignItems: "center", justifyContent: "center" },
 });
