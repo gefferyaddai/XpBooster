@@ -14,14 +14,124 @@ import {
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {CameraView,useCameraPermissions} from "expo-camera";
+import * as Progress from "react-native-progress";
 
+
+
+
+const API_BASE = "http://10.0.0.17:8000";
 const Tab = createBottomTabNavigator();
+function Camera({ proofRequirement, onResult, setVerifying }){
+  const CameraRef = useRef(null);
+  const [permisson, requestPermisson] = useCameraPermissions();
+  const [sloading, ssetLoading] = useState(false);
+
+
+
+
+  if (!permisson) {
+    return (
+        <View>
+
+        </View>
+    )
+  }
+
+  if (!permisson.granted){
+    return (
+        <View style={styles.center}>
+          <Text>Camera access is required </Text>
+          <Pressable  style={buttonStyles.container} onPress={requestPermisson}>
+            <Text style={buttonStyles.text}>Grant permission</Text>
+          </Pressable>
+        </View>
+    );
+  }
+
+  const takePhoto = async ()=> {
+    ssetLoading(true);
+    setVerifying?.(true);
+    if (!CameraRef.current) {
+      setVerifying(false);
+      ssetLoading(false);
+      return;
+    }
+    const photo = await CameraRef.current.takePictureAsync();
+    // send photo to backend
+    const formData = new FormData();
+
+
+    formData.append("file", {
+      uri: photo.uri,
+      name: "proof.jpg",
+      type: "image/jpeg",
+    });
+    formData.append("proof_requirement", proofRequirement);
+
+    const res = await fetch(`${API_BASE}/verify-proof`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+    console.log(data); // { status: true/false, reason: "..." }
+
+    onResult?.(data);
+    setVerifying?.(false);
+    ssetLoading(false);
+  };
+  return (
+      <View style={{flex: 1}}>
+        <CameraView ref={CameraRef} style={{flex: 1}} />
+        <Pressable style={{ position: "absolute", bottom: 60, alignSelf: "center" }} onPress={takePhoto}>
+          <Text style={{ color: "white" }}>Take picture</Text>
+        </Pressable>
+
+        {sloading && (
+            <View style={loaderStyles.overlay}>
+              <ActivityIndicator size="large" />
+              <Text style={loaderStyles.text}>Verifying proof..</Text>
+            </View>
+        )}
+      </View>
+  )
+
+
+}
+
+function Verification({ result }) {
+  if (!result) return null;
+  if (result.status === true){
+    return(
+        <View>
+          <Text>Verification complete: correct</Text>
+        </View>
+    )
+
+  }else {
+    return(
+        <View>
+          <Text>Verification complete: Incorrect</Text>
+        </View>
+    )
+  }
+
+}
+
 
 function HomeScreen() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('Choose difficulty');
   const [goalText, setGoalText] = useState('');
   const [showGoalCard, setShowGoalCard] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
+  const [verificationResult, setVerificationResult] = useState(null); // null | { status: boolean, reason: string }
+  const [verifying, setVerifying] = useState(false);
+  const [xp, setXp] = useState(0);
+  const XP_PER_OBJECTIVE = 1.5;
+
+
 
   const difficultyMap = {
     Easy: 15,
@@ -47,7 +157,7 @@ function HomeScreen() {
 
     setLoading(true);
     try {
-      const res = await fetch('http://127.0.0.1:8000/generate-objectives', {
+      const res = await fetch(`${API_BASE}/generate-objectives`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,7 +177,11 @@ function HomeScreen() {
       const data = await res.json();
 
       // data.objectives is a list of { id, index, text }
-      const extracted = data.objectives.map((obj) => obj.text);
+      const extracted = data.objectives.map((obj, idx) => ({
+        id: obj.id ?? String(idx),
+        text: obj.text,
+        completed: false,
+      }));
 
       setObjectives(extracted);
       setShowGoalCard(true);
@@ -106,6 +220,8 @@ function HomeScreen() {
   return (
       <SafeAreaView style={styles.container}>
         {/* TOP SECTION: goal input + difficulty */}
+        <LevelProgression input={xp} />
+
         <View
             style={[
               styles.topSection,
@@ -172,12 +288,13 @@ function HomeScreen() {
               <ScrollView contentContainerStyle={styles.cardsContainer}>
                 {objectives.map((obj, idx) => (
                     <GoalCard
-                        key={idx}
-                        goal={obj}
+                        key={obj.id}
+                        goal={obj.text}
                         goalCount={idx + 1}
-                        onOpen={() => openObjective(obj, idx)}
+                        onOpen={() => openObjective(obj.text, idx)}
                     />
                 ))}
+
               </ScrollView>
             </View>
         )}
@@ -207,11 +324,23 @@ function HomeScreen() {
                       {activeObjective.goal}
                     </Text>
                   </ScrollView>
+
+                  {verifying && <Text style={{ marginTop: 10 }}>Verifying proof...</Text>}
+                  <Verification result={verificationResult} />
+
+
                 </View>
 
-                <Pressable style={overlayStyles.modalButton}>
+                <Pressable
+                    style={overlayStyles.modalButton}
+                    onPress={() => {
+                      setVerificationResult(null);
+                      setShowCamera(true);
+                    }}
+                >
                   <Text style={overlayStyles.modalButtonText}>Submit proof</Text>
                 </Pressable>
+
               </Animated.View>
             </View>
         )}
@@ -224,10 +353,76 @@ function HomeScreen() {
             </View>
         )}
 
+        {showCamera && (
+            <View style={cameraOverlayStyles.overlay}>
+              <Camera
+                  proofRequirement={activeObjective?.goal ?? ""}
+                  setVerifying={setVerifying}
+                  onResult={(result) => {
+                    setVerificationResult(result);
+                    setShowCamera(false);
+
+                    if (result?.status === true && activeObjective) {
+                      const idx = activeObjective.index;
+
+                      setObjectives((prev) => {
+                        // already completed? don't award again
+                        if (prev[idx]?.completed) return prev;
+
+                        const copy = [...prev];
+                        copy[idx] = { ...copy[idx], completed: true };
+                        return copy;
+                      });
+
+                      setXp((prevXp) => prevXp + XP_PER_OBJECTIVE);
+                    }
+                  }}
+
+              />
+
+              <Pressable style={cameraOverlayStyles.close} onPress={() => setShowCamera(false)}>
+                <Text style={cameraOverlayStyles.closeText}>Close</Text>
+              </Pressable>
+            </View>
+        )}
+
         <StatusBar style="auto" />
       </SafeAreaView>
   );
+
 }
+function LevelProgression({ input }) {
+  const XP_PER_LEVEL = 50;
+
+  const startLevel = Math.floor(input / XP_PER_LEVEL);
+  const nextLevel = startLevel + 1;
+
+  const progress = (input % XP_PER_LEVEL) / XP_PER_LEVEL; // always 0..1
+
+
+  return (
+      <View style={styles1.row}>
+        <Text style={styles1.level}> lvl {startLevel}</Text>
+
+        <Progress.Bar
+            progress={progress}
+            width={350}
+            height={20}
+            color="#4CAF50"
+            unfilledColor="#e0e0e0"
+            borderWidth={0}
+            borderRadius={6}
+        />
+
+        <Text style={styles1.level}>lvl {nextLevel}</Text>
+      </View>
+  );
+}
+
+const styles1 = StyleSheet.create({
+  row: { flexDirection: "row", alignItems: "center", gap: 8 },
+  level: { fontWeight: "600" },
+});
 
 function QuestScreen() {
   return (
@@ -245,11 +440,12 @@ function ProfileScreen() {
   );
 }
 
+
 export default function App() {
   return (
       <NavigationContainer>
         <Tab.Navigator>
-          <Tab.Screen name={'Home'} component={HomeScreen} />
+          <Tab.Screen name={'home'} component={HomeScreen} />
           <Tab.Screen name={'Quest'} component={QuestScreen} />
           <Tab.Screen name={'Profile'} component={ProfileScreen} />
         </Tab.Navigator>
@@ -454,4 +650,21 @@ const loaderStyles = StyleSheet.create({
     zIndex: 999,
   },
   text: { marginTop: 12, fontSize: 16 },
+});
+const cameraOverlayStyles = StyleSheet.create({
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "grey",
+    zIndex: 9999,
+  },
+  close: {
+    position: "absolute",
+    top: 60,
+    right: 20,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+  },
+  closeText: { color: "white", fontSize: 16 },
 });
