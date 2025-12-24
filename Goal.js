@@ -30,7 +30,7 @@ const AnimatedCircle = Reanimated.createAnimatedComponent(Circle);
 const AnimatedPath = Reanimated.createAnimatedComponent(Path);
 
 
-const API_BASE = "http://10.0.0.17:8000";
+const API_BASE = "http://172.20.10.2:8000";
 function Camera({ proofRequirement, onResult, setVerifying }){
   const CameraRef = useRef(null);
   const [permisson, requestPermisson] = useCameraPermissions();
@@ -629,7 +629,7 @@ export function LevelProgression({ input }) {
             borderRadius={6}
         />
 
-        <Text style={styles1.level}>lvl {nextLevel}</Text>
+        <Text style={styles4.level}>lvl {nextLevel}</Text>
       </View>
   );
 }
@@ -673,157 +673,325 @@ function GoalCard({ goal, goalCount, onOpen, locked, completed }) {
 }
 
 
-// MAIN LAYOUT
+// ✅ Add near your styles (optional helper constants)
+const COLORS = {
+  blueBell: "#3E92CC",
+  balticBlue: "#2A628F",
+  deepSpace: "#13293D",
+  deepSpaceAlt: "#16324F",
+  yaleBlue: "#18435A",
+  text: "rgba(255,255,255,0.92)",
+  muted: "rgba(255,255,255,0.65)",
+  border: "rgba(255,255,255,0.10)",
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ✅ MAIN LAYOUT
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: COLORS.deepSpace,
   },
   topSection: {
-    flex: 1, // when no goals, takes full screen
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 40,
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: 24,
+    paddingHorizontal: 16,
   },
   topSectionWithGoals: {
-    flex: 0.4, // shrink to ~top 40% when goals visible
-    justifyContent: 'flex-start',
+    flex: 0.4,
+    justifyContent: "flex-start",
+    paddingTop: 12,
   },
   bottomSection: {
-    flex: 0.6, // bottom ~60% of screen
-    paddingHorizontal: 12,
+    flex: 0.6,
+    paddingHorizontal: 16,
     paddingBottom: 16,
   },
   cardsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between', // spreads cards across row
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
     rowGap: 12,
+    columnGap: 12,
+    paddingTop: 8,
+    paddingBottom: 24,
   },
 });
 
+// ✅ LEVEL PROGRESSION ROW
+const styles4 = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 10,
+  },
+  level: {
+    fontWeight: "800",
+    color: COLORS.text,
+  },
+});
+
+// ✅ TEXT
 const textStyles = StyleSheet.create({
   title: {
-    fontSize: 24,
-    fontWeight: '600',
+    fontSize: 26,
+    fontWeight: "800",
+    color: COLORS.blueBell,
+    marginBottom: 10,
+    letterSpacing: 0.2,
   },
 });
 
+// ✅ INPUT
 const inputArea = StyleSheet.create({
   container: {
-    height: 40,
-    width: 250,
+    height: 44,
+    width: 280,
     borderWidth: 1,
-    borderColor: 'gray',
-    paddingHorizontal: 10,
-    marginTop: 20,
-    borderRadius: 8,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.deepSpaceAlt,
+    color: COLORS.text,
+    paddingHorizontal: 12,
+    marginTop: 10,
+    borderRadius: 14,
   },
 });
 
+// ✅ PRIMARY BUTTON (START / Grant permission)
 const buttonStyles = StyleSheet.create({
   container: {
-    marginTop: 20,
-    backgroundColor: 'black',
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    borderRadius: 8,
+    marginTop: 16,
+    backgroundColor: COLORS.balticBlue,
+    paddingVertical: 12,
+    paddingHorizontal: 34,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "rgba(62,146,204,0.25)", // accent tint
+    shadowColor: "#000",
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 3,
   },
   text: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
+    fontWeight: "800",
+    letterSpacing: 0.3,
   },
 });
 
+// ✅ DROPDOWN
 const dropdownStyles = StyleSheet.create({
   selector: {
-    marginTop: 20,
-    width: 250,
+    marginTop: 12,
+    width: 280,
     borderWidth: 1,
-    borderColor: 'gray',
-    padding: 10,
-    borderRadius: 8,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.yaleBlue,
+    padding: 12,
+    borderRadius: 14,
   },
   menu: {
-    marginTop: 5,
-    width: 250,
+    marginTop: 8,
+    width: 280,
     borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 8,
-    padding: 5,
+    borderColor: COLORS.border,
+    borderRadius: 14,
+    padding: 10,
+    backgroundColor: COLORS.deepSpaceAlt,
   },
 });
 
-// GOAL CARD
+// ✅ GOAL CARD (grid)
 const goalCardStyles = StyleSheet.create({
   card: {
-    width: '30%', // roughly 3 per row
-    minWidth: 100,
+    width: "30%",
+    minWidth: 105,
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 12,
-    padding: 10,
+    borderColor: COLORS.border,
+    borderRadius: 16,
+    padding: 12,
     marginBottom: 12,
+    backgroundColor: COLORS.deepSpaceAlt,
+
+    shadowColor: "#000",
+    shadowOpacity: 0.22,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 2,
   },
   title: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 4,
+    fontSize: 13,
+    fontWeight: "800",
+    color: COLORS.blueBell,
+    marginBottom: 6,
   },
   body: {
     fontSize: 12,
-    marginBottom: 8,
+    color: COLORS.text,
+    opacity: 0.9,
+    marginBottom: 10,
   },
   button: {
-    alignSelf: 'flex-start',
-    backgroundColor: 'black',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
+    alignSelf: "flex-start",
+    backgroundColor: COLORS.balticBlue,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.10)",
   },
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 12,
+    fontWeight: "800",
   },
 });
 
+// ✅ OVERLAY MODAL (objective popup)
 const overlayStyles = StyleSheet.create({
   overlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     right: 0,
     bottom: 0,
     left: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: "rgba(19,41,61,0.75)", // deepSpace with opacity
   },
   modalCard: {
-    width: '85%',
-    maxHeight: '90%',
-    backgroundColor: 'white',
-    borderRadius: 16,
+    width: "88%",
+    maxHeight: "90%",
+    backgroundColor: COLORS.yaleBlue,
+    borderRadius: 18,
     padding: 16,
+    borderWidth: 1,
+    borderColor: "rgba(62,146,204,0.18)",
+
+    shadowColor: "#000",
+    shadowOpacity: 0.28,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 10 },
     elevation: 5,
-    shadowColor: '#000',
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 8,
+    fontWeight: "900",
+    color: COLORS.blueBell,
+    marginBottom: 10,
   },
   modalBodyWrapper: {
     flexGrow: 1,
     marginVertical: 8,
   },
   modalBodyScroll: {
-    maxHeight: 220,
+    maxHeight: 240,
+    backgroundColor: "rgba(22,50,79,0.55)",
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   modalBodyContent: {
     paddingBottom: 8,
@@ -831,52 +999,69 @@ const overlayStyles = StyleSheet.create({
   modalBodyText: {
     fontSize: 14,
     lineHeight: 20,
+    color: COLORS.text,
   },
   modalButton: {
-    marginTop: 12,
-    alignSelf: 'center',
-    backgroundColor: 'black',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 10,
+    marginTop: 14,
+    alignSelf: "center",
+    backgroundColor: COLORS.balticBlue,
+    paddingHorizontal: 22,
+    paddingVertical: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.10)",
   },
   modalButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
+    fontWeight: "900",
+    letterSpacing: 0.2,
   },
 });
 
+// ✅ LOADER
 const loaderStyles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'grey',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "rgba(19,41,61,0.85)",
+    alignItems: "center",
+    justifyContent: "center",
     zIndex: 999,
   },
-  text: { marginTop: 12, fontSize: 16 },
+  text: {
+    marginTop: 12,
+    fontSize: 16,
+    fontWeight: "700",
+    color: COLORS.text,
+  },
 });
+
+// ✅ CAMERA OVERLAY
 const cameraOverlayStyles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "grey",
+    backgroundColor: COLORS.deepSpace,
     zIndex: 9999,
   },
   close: {
     position: "absolute",
     top: 60,
     right: 20,
-    backgroundColor: "rgba(0,0,0,0.6)",
+    backgroundColor: "rgba(22,50,79,0.85)",
     paddingVertical: 10,
     paddingHorizontal: 14,
-    borderRadius: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
-  closeText: { color: "white", fontSize: 16 },
+  closeText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "800",
+  },
 });
 
+// ✅ Used for CheckMark / X container
 const styles2 = StyleSheet.create({
   container: { alignItems: "center", justifyContent: "center" },
 });
-
-
-
