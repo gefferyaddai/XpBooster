@@ -14,7 +14,7 @@ export default function App() {
             <Tab.Navigator
                 id="Tab-navigator"
                 screenOptions={{
-                    // 🔵 HEADER (top bar)
+                    //  HEADER (top bar)
                     headerStyle: {
                         backgroundColor: "#13293D", // Deep Space Blue
                     },
@@ -25,7 +25,7 @@ export default function App() {
                     },
                     headerTintColor: "#3E92CC",
 
-                    // 🔵 TAB BAR (bottom)
+                    //  TAB BAR (bottom)
                     tabBarStyle: {
                         backgroundColor: "#13293D", // Deep Space Blue
                         borderTopColor: "rgba(255,255,255,0.08)",
@@ -44,7 +44,7 @@ export default function App() {
                 <Tab.Screen name="home" component={HomeScreen} />
                 <Tab.Screen name="goal" component={GoalScreen} />
                 <Tab.Screen name="Quest" component={QuestScreen} />
-                <Tab.Screen name="Profile" component={ProfileScreen} />
+                <Tab.Screen name=" " component={ProfileScreen}/>
             </Tab.Navigator>
         </NavigationContainer>
     );

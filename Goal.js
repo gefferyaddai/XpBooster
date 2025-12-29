@@ -30,7 +30,7 @@ const AnimatedCircle = Reanimated.createAnimatedComponent(Circle);
 const AnimatedPath = Reanimated.createAnimatedComponent(Path);
 
 
-const API_BASE = "http://172.20.10.2:8000";
+const API_BASE = "http://10.0.0.18:8000";
 function Camera({ proofRequirement, onResult, setVerifying }){
   const CameraRef = useRef(null);
   const [permisson, requestPermisson] = useCameraPermissions();
@@ -673,7 +673,7 @@ function GoalCard({ goal, goalCount, onOpen, locked, completed }) {
 }
 
 
-// ✅ Add near your styles (optional helper constants)
+//  Add near your styles (optional helper constants)
 const COLORS = {
   blueBell: "#3E92CC",
   balticBlue: "#2A628F",
@@ -685,7 +685,7 @@ const COLORS = {
   border: "rgba(255,255,255,0.10)",
 };
 
-// ✅ MAIN LAYOUT
+//  MAIN LAYOUT
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -719,7 +719,7 @@ const styles = StyleSheet.create({
   },
 });
 
-// ✅ LEVEL PROGRESSION ROW
+//  LEVEL PROGRESSION ROW
 const styles4 = StyleSheet.create({
   row: {
     flexDirection: "row",
@@ -735,7 +735,7 @@ const styles4 = StyleSheet.create({
   },
 });
 
-// ✅ TEXT
+//  TEXT
 const textStyles = StyleSheet.create({
   title: {
     fontSize: 26,
@@ -746,7 +746,7 @@ const textStyles = StyleSheet.create({
   },
 });
 
-// ✅ INPUT
+//  INPUT
 const inputArea = StyleSheet.create({
   container: {
     height: 44,
@@ -761,7 +761,7 @@ const inputArea = StyleSheet.create({
   },
 });
 
-// ✅ PRIMARY BUTTON (START / Grant permission)
+//  PRIMARY BUTTON (START / Grant permission)
 const buttonStyles = StyleSheet.create({
   container: {
     marginTop: 16,
@@ -785,7 +785,7 @@ const buttonStyles = StyleSheet.create({
   },
 });
 
-// ✅ DROPDOWN
+//  DROPDOWN
 const dropdownStyles = StyleSheet.create({
   selector: {
     marginTop: 12,
@@ -807,7 +807,7 @@ const dropdownStyles = StyleSheet.create({
   },
 });
 
-// ✅ GOAL CARD (grid)
+//  GOAL CARD (grid)
 const goalCardStyles = StyleSheet.create({
   card: {
     width: "30%",
@@ -853,7 +853,7 @@ const goalCardStyles = StyleSheet.create({
   },
 });
 
-// ✅ OVERLAY MODAL (objective popup)
+//  OVERLAY MODAL (objective popup)
 const overlayStyles = StyleSheet.create({
   overlay: {
     position: "absolute",
@@ -928,7 +928,7 @@ const overlayStyles = StyleSheet.create({
   },
 });
 
-// ✅ LOADER
+//  LOADER
 const loaderStyles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
@@ -945,7 +945,7 @@ const loaderStyles = StyleSheet.create({
   },
 });
 
-// ✅ CAMERA OVERLAY
+//  CAMERA OVERLAY
 const cameraOverlayStyles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
@@ -970,7 +970,7 @@ const cameraOverlayStyles = StyleSheet.create({
   },
 });
 
-// ✅ Used for CheckMark / X container
+//Used for CheckMark / X container
 const styles2 = StyleSheet.create({
   container: { alignItems: "center", justifyContent: "center" },
 });

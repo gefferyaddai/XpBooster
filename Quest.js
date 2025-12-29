@@ -156,7 +156,7 @@ const card = StyleSheet.create({
         width: "90%",
         minHeight: 110,
         borderRadius: 16,
-        backgroundColor: COLORS.deepSpaceAlt, // ✅ card surface
+        backgroundColor: COLORS.deepSpaceAlt,
         padding: 14,
         borderWidth: 1,
         borderColor: COLORS.border,
@@ -171,12 +171,12 @@ const card = StyleSheet.create({
     goalName: {
         fontSize: 16,
         fontWeight: "800",
-        color: COLORS.text, // ✅ white-ish
+        color: COLORS.text, // white-ish
         marginBottom: 8,
     },
     goalContent: {
         fontSize: 14,
-        color: COLORS.muted, // ✅ muted white
+        color: COLORS.muted, //muted white
         paddingRight: 70,
     },
     openBtn: {
@@ -186,7 +186,7 @@ const card = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 14,
         borderRadius: 12,
-        backgroundColor: COLORS.balticBlue, // ✅ primary button color
+        backgroundColor: COLORS.balticBlue, //  primary button color
         borderWidth: 1,
         borderColor: "rgba(255,255,255,0.12)",
     },
@@ -199,7 +199,7 @@ const card = StyleSheet.create({
 const overlay = StyleSheet.create({
     backdrop: {
         flex: 1,
-        backgroundColor: "rgba(19,41,61,0.75)", // ✅ deepSpace tint
+        backgroundColor: "rgba(19,41,61,0.75)", //  deepSpace tint
         justifyContent: "center",
         alignItems: "center",
         padding: 16,
@@ -207,7 +207,7 @@ const overlay = StyleSheet.create({
     card: {
         width: "92%",
         borderRadius: 18,
-        backgroundColor: COLORS.yaleBlue, // ✅ modal surface
+        backgroundColor: COLORS.yaleBlue, //  modal surface
         padding: 18,
         minHeight: 220,
         borderWidth: 1,
@@ -222,7 +222,7 @@ const overlay = StyleSheet.create({
     goalName: {
         fontSize: 20,
         fontWeight: "900",
-        color: COLORS.blueBell, // ✅ accent title in modal
+        color: COLORS.blueBell, //  accent title in modal
         marginBottom: 10,
     },
     goalContent: {
@@ -236,7 +236,7 @@ const overlay = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 16,
         borderRadius: 12,
-        backgroundColor: COLORS.balticBlue, // ✅ primary
+        backgroundColor: COLORS.balticBlue, //  primary
         borderWidth: 1,
         borderColor: "rgba(255,255,255,0.12)",
     },
