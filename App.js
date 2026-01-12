@@ -44,7 +44,7 @@ export default function App() {
                 <Tab.Screen name="home" component={HomeScreen} />
                 <Tab.Screen name="goal" component={GoalScreen} />
                 <Tab.Screen name="Quest" component={QuestScreen} />
-                <Tab.Screen name=" " component={ProfileScreen}/>
+                <Tab.Screen name="Profile" component={ProfileScreen}/>
             </Tab.Navigator>
         </NavigationContainer>
     );
