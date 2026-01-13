@@ -16,7 +16,7 @@ import { StatusBar } from "expo-status-bar";
 
 const DefaultAvatar = require("./assets/NPP.png");
 
-function RowItem({ icon, label, onPress }) {
+ export function RowItem({ icon, label, onPress }) {
     return (
         <Pressable onPress={onPress} style={styles.row} android_ripple={{ color: "#00000010" }}>
             <View style={styles.rowLeft}>
