@@ -30,7 +30,7 @@ const AnimatedCircle = Reanimated.createAnimatedComponent(Circle);
 const AnimatedPath = Reanimated.createAnimatedComponent(Path);
 
 
-const API_BASE = "http://10.12.69.143:8000";
+const API_BASE = "http://10.12.135.203:8000";// change API base to match
 function Camera({ proofRequirement, onResult, setVerifying }){
   const CameraRef = useRef(null);
   const [permisson, requestPermisson] = useCameraPermissions();
