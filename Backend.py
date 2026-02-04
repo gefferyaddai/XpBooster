@@ -147,7 +147,7 @@ async def verify_proof(
     # 3) ask OpenAI (force a strict JSON output)
     system_prompt = (
         "You are a strict proof verifier. "
-        "You must decide if the image satisfies the proof requirement. "
+        "You must decide if the image satisfies the proof requirement based on the objective. "
         "If uncertain, return false."
     )
 
