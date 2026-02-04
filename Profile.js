@@ -8,6 +8,7 @@ import {
     Pressable,
     ScrollView,
     Alert,
+
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
@@ -28,7 +29,7 @@ const DefaultAvatar = require("./assets/NPP.png");
     );
 }
 
-export function ProfileScreen() {
+export function ProfileScreen({navigation}) {
 
     const name = "Geffery Addai";
     const [photoUri, setPhotoUri] = useState(null);
@@ -108,7 +109,8 @@ export function ProfileScreen() {
                     <RowItem
                         icon={<MaterialIcons name="payment" size={18} color="#0F4C6B" />}
                         label="Billing"
-                        onPress={() => {}}
+                        onPress={() => navigation.navigate("Billing")}
+
                     />
                     <RowItem
                         icon={<Feather name="sliders" size={18} color="#0F4C6B" />}
