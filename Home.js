@@ -19,9 +19,9 @@ export function HomeScreen({ xp }) {
 
                 <View style={styles.menuCard}>
                     <MenuButton label="Goals" />
-                    <MenuButton label="Daily Quest" />
+                    <MenuButton label="Explore " />
                     <MenuButton label="Leaderboard" />
-                    <MenuButton label="Profile" />
+                    <MenuButton label="Missions" />
                 </View>
             </View>
         </SafeAreaView>
