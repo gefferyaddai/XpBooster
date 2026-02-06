@@ -13,8 +13,8 @@ export function HomeScreen({ xp }) {
             {/* Main Content */}
             <View style={styles.content}>
                 <View style={styles.titleCard}>
-                    <Text style={styles.title}>XpBooster</Text>
-                    <Text style={styles.subtitle}>Lock in goals • Earn XP • Level up</Text>
+                    <Text style={styles.title}>XpBooster</Text>=[\]
+                    '<Text style={styles.subtitle}>Lock in goals • Earn XP • Level up</Text>
                 </View>
 
                 <View style={styles.menuCard}>
